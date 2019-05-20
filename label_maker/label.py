@@ -225,13 +225,15 @@ def _mapper(x, y, z, data, args):
                     if ff(feat):
                         feat['geometry']['coordinates'] = _convert_coordinates(feat['geometry']['coordinates'])
                         geo = shape(feat['geometry'])
+                        #fix for bad topology
+                        if cl.get('buffer'):
+                            geo = geo.buffer(cl.get('buffer'), 4)
                         try:
                             geo = geo.intersection(clip_mask)
                         except TopologicalError as e:
                             print(e, 'skipping')
-                            break
-                        if cl.get('buffer'):
-                            geo = geo.buffer(cl.get('buffer'), 4)
+                            break                            
+                            
                         if not geo.is_empty:
                             geos.append((mapping(geo), i + 1))
             result = rasterize(geos, out_shape=(256, 256))
