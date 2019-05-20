@@ -226,7 +226,12 @@ def _mapper(x, y, z, data, args):
                         feat['geometry']['coordinates'] = _convert_coordinates(feat['geometry']['coordinates'])
                         geo = shape(feat['geometry'])
                         #fix for bad topology
-                        geo = geo.buffer(0)
+                        try:
+                            geo = geo.buffer(0)
+                        except:
+                            print("broken buffering")
+                            break         
+                        
                         try:
                             geo = geo.intersection(clip_mask)
                         except TopologicalError as e:
