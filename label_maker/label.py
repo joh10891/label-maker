@@ -226,13 +226,15 @@ def _mapper(x, y, z, data, args):
                         feat['geometry']['coordinates'] = _convert_coordinates(feat['geometry']['coordinates'])
                         geo = shape(feat['geometry'])
                         #fix for bad topology
-                        if cl.get('buffer'):
-                            geo = geo.buffer(cl.get('buffer'), 4)
+                        geo = geo.buffer(0)
                         try:
                             geo = geo.intersection(clip_mask)
                         except TopologicalError as e:
                             print(e, 'skipping')
-                            break                            
+                            break         
+                        if cl.get('buffer'):
+                            geo = geo.buffer(cl.get('buffer'), 4)
+                   
                             
                         if not geo.is_empty:
                             geos.append((mapping(geo), i + 1))
